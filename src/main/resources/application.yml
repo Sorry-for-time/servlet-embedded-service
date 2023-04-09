@@ -1,0 +1,4 @@
+server:
+  port: 61530
+  hostName: www.shalling.me
+  serverName: SHALLING-SERVER
