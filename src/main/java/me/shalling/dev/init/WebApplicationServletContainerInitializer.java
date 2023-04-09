@@ -23,7 +23,7 @@ public final class WebApplicationServletContainerInitializer implements Serializ
 
   @Override
   public void onStartup(Set<Class<?>> c, ServletContext ctx) {
-    log.info("~".repeat(20) + "set initial param on server startup" + "~".repeat(20));
+    log.info("set initial param on server startup");
     ctx.setInitParameter("server-name", SERVER_NAME);
     ctx.setInitParameter("version", VERSION);
   }
