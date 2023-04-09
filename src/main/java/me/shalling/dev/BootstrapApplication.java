@@ -12,6 +12,6 @@ import me.shalling.dev.init.StartApplicationServer;
 @Slf4j
 public class BootstrapApplication {
   public static void main(String... args) {
-    StartApplicationServer.start(args);
+    StartApplicationServer.start();
   }
 }
