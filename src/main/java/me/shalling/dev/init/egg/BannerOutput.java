@@ -38,7 +38,7 @@ public class BannerOutput implements Serializable {
         ) {
           byte[] bytes = Objects.requireNonNull(resourceAsStream).readAllBytes();
           String s = new String(bytes);
-          System.out.println("\u001B[92m" + s);
+          System.out.println(ConsoleColors.TEXT_BRIGHT_GREEN + s + ConsoleColors.TEXT_RESET);
         } catch (IOException e) {
           e.printStackTrace();
           throw new RuntimeException(e);
