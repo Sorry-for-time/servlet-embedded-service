@@ -54,13 +54,6 @@
       <version>${tomcat-version}</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-servlet-api -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.apache.tomcat</groupId> -->
-    <!--   <artifactId>tomcat-servlet-api</artifactId> -->
-    <!--   <version>${tomcat-version}</version> -->
-    <!-- </dependency> -->
-
     <!-- https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-logging-juli -->
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
@@ -81,7 +74,7 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${logback-version}</version>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
