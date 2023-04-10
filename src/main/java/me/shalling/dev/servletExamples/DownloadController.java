@@ -1,4 +1,4 @@
-package me.shalling.dev.controller;
+package me.shalling.dev.servletExamples;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.annotation.WebServlet;

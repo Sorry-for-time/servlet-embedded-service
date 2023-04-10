@@ -11,7 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 应用服务配置获取类
+ * get user custom server config
  *
  * @author Shalling
  * @version v0.01
@@ -28,9 +28,9 @@ public class ConfigProvider implements Serializable {
   }
 
   /**
-   * 获取默认服务器配置, 这个配置只会在加载一次, 后续每次取得的结果都是幂等的
+   * get user custom properties from file, just load once, more operation is idempotent(singleton instance)
    *
-   * @return 从配置文件里读取的服务器配置
+   * @return load server config from `application.yml`
    */
   public static ServerConfig getConfiguration() {
     if (serverConfig == null) {

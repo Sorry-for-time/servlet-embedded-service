@@ -5,15 +5,14 @@ import me.shalling.dev.init.config.ServerCommonDetail;
 import me.shalling.dev.init.config.ServerConfig;
 import me.shalling.dev.init.egg.BannerOutput;
 import me.shalling.dev.init.egg.ConsoleColors;
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.EmptyResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.coyote.http2.Http2Protocol;
+import org.apache.tomcat.util.net.SSLHostConfig;
 
 import java.io.File;
 import java.io.Serial;
@@ -27,68 +26,86 @@ import java.io.Serializable;
  */
 @Slf4j
 public final class StartApplicationServer implements Serializable {
+  public static final String WORK_HOME = System.getProperty("user.dir");
   @Serial
   private static final long serialVersionUID = -6432398288697156075L;
-  public static final int DEFAULT_PORT = 9012;
-  public static final String DEFAULT_HOSTNAME = "127.0.0.1";
+  public static final int DEFAULT_PORT = 8080;
+  public static final String DEFAULT_HOSTNAME = "localhost";
+  public static final String STORE_DIR = System.getProperty("user.dir") + "/target";
+  public static final String WEBAPP_PATHNAME = "./";
 
+  /**
+   * 启动 tomcat 容器服务
+   */
   public static void start() {
-    final var tomcatContainer = new Tomcat();
-    // 获取用户配置
+    /*
+     * load user custom properties from application.yml file
+     *  */
     ServerConfig configurationSingleton = ConfigProvider.getConfiguration();
-    ServerCommonDetail server = configurationSingleton.getServer();
+    ServerCommonDetail serverConfigDetail = configurationSingleton.getServer();
     BannerOutput.displayBanner(configurationSingleton);
     System.out.println(ConsoleColors.TEXT_BRIGHT_YELLOW + configurationSingleton + ConsoleColors.TEXT_RESET);
 
-    if (server != null) {
-      if (server.getPort() != null) {
-        tomcatContainer.setPort(server.getPort());
+    final var tomcatInstance = new Tomcat();
+    tomcatInstance.setBaseDir(STORE_DIR);
+    tomcatInstance.setAddDefaultWebXmlToWebapp(false);
+
+    // setup properties if exists
+    if (serverConfigDetail != null) {
+      if (serverConfigDetail.getPort() != null) {
+        tomcatInstance.setPort(serverConfigDetail.getPort());
       } else {
-        tomcatContainer.setPort(DEFAULT_PORT);
+        tomcatInstance.setPort(DEFAULT_PORT);
       }
-      if (server.getHostName() != null) {
-        tomcatContainer.setHostname(server.getHostName());
+      if (serverConfigDetail.getHostName() != null) {
+        tomcatInstance.setHostname(serverConfigDetail.getHostName());
       } else {
-        tomcatContainer.setHostname(DEFAULT_HOSTNAME);
+        tomcatInstance.setHostname(DEFAULT_HOSTNAME);
       }
     } else {
-      tomcatContainer.setPort(DEFAULT_PORT);
-      tomcatContainer.setHostname(DEFAULT_HOSTNAME);
+      tomcatInstance.setPort(DEFAULT_PORT);
+      tomcatInstance.setHostname(DEFAULT_HOSTNAME);
     }
 
-    // 获取嵌入式 Tomcat 使用的默认 HTTP 连接器, 它是服务中第一个配置的连接器, 9.0+ 版本需要显示获取1
-    Connector connector = tomcatContainer.getConnector();
+    StandardContext context = (StandardContext) tomcatInstance
+      .addWebapp(
+        "/",
+        new File(WEBAPP_PATHNAME).getAbsolutePath()
+      );
+    context.setCookies(true);
+    context.setSessionCookiePathUsesTrailingSlash(true);
+    context.setUseHttpOnly(true);
+    setupResource(context);
+
+    Connector connector = tomcatInstance.getConnector();
     connector.setSecure(true);
-    Context context = tomcatContainer.addWebapp("", new File("./").getAbsolutePath());
-    // 配置上下文, 路径等信息
-    setupResource((StandardContext) context);
+    connector.addUpgradeProtocol(new Http2Protocol());
+    connector.addSslHostConfig(new SSLHostConfig());
+    connector.setAllowTrace(true);
 
-    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server bind port: " + connector.getPort() + ConsoleColors.TEXT_RESET);
-    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server scheme: " + connector.getScheme() + ConsoleColors.TEXT_RESET);
-    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server objectName: " + connector.getObjectName() + ConsoleColors.TEXT_RESET);
-    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server executorName: " + connector.getExecutorName() + ConsoleColors.TEXT_RESET);
-    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server protocol: " + connector.getProtocol() + ConsoleColors.TEXT_RESET);
+    showConnectorBasicInfo(connector);
 
-    // 启动服务器
     try {
-      tomcatContainer.start();
-    } catch (LifecycleException e) {
+      tomcatInstance.start();
+      tomcatInstance
+        .getServer()
+        .await();
+    } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException(e);
     }
-
-    tomcatContainer
-      .getServer()
-      .await();
   }
 
+  /**
+   * 对上下文对象进行初始化配置
+   *
+   * @param context 上限=下文对象配置
+   */
   private static void setupResource(StandardContext context) {
-    String workHome = System.getProperty("user.dir");
-    System.out.println(ConsoleColors.TEXT_BRIGHT_PURPLE + "WORK HOME: " + workHome + ConsoleColors.TEXT_RESET);
-    File classedDir = new File(workHome, "target/classes");
-    File jarDir = new File(workHome, "");
-    WebResourceRoot resourceRoot = new StandardRoot(context);
-
+    System.out.println(ConsoleColors.TEXT_BRIGHT_PURPLE + "WORK HOME: " + WORK_HOME + ConsoleColors.TEXT_RESET);
+    File classedDir = new File(WORK_HOME, "target/classes");
+    File jarDir = new File(WORK_HOME, "");
+    var resourceRoot = new StandardRoot(context);
     if (classedDir.exists()) {
       resourceRoot
         .addPreResources(
@@ -118,7 +135,14 @@ public final class StartApplicationServer implements Serializable {
         );
       log.info("Resources added: [empty]");
     }
-
     context.setResources(resourceRoot);
+  }
+
+  private static void showConnectorBasicInfo(Connector connector) {
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server bind port: " + connector.getPort() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server scheme: " + connector.getScheme() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server objectName: " + connector.getObjectName() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server executorName: " + connector.getExecutorName() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server protocol: " + connector.getProtocol() + ConsoleColors.TEXT_RESET);
   }
 }

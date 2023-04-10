@@ -3,6 +3,7 @@ package me.shalling.dev.init;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
+import me.shalling.dev.init.config.ServerConfig;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,8 +24,15 @@ public final class WebApplicationServletContainerInitializer implements Serializ
 
   @Override
   public void onStartup(Set<Class<?>> c, ServletContext ctx) {
+    ServerConfig configuration = ConfigProvider.getConfiguration();
+    String serverName = null;
+    if (configuration != null) {
+      if (configuration.getServer().getServerName() != null) {
+        serverName = configuration.getServer().getServerName();
+      }
+    }
     log.info("set initial param on server startup");
-    ctx.setInitParameter("server-name", SERVER_NAME);
+    ctx.setInitParameter("server-name", serverName != null ? serverName : SERVER_NAME);
     ctx.setInitParameter("version", VERSION);
   }
 }

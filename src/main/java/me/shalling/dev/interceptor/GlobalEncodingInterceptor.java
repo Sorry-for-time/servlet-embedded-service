@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 全局 `请求/响应` 编码设置拦截器
+ * global request/response character encoding process
  *
  * @author Shalling
  * @version v0.01
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 @WebFilter(
   urlPatterns = {"/*"},
   asyncSupported = true,
-  description = "全局请求/响应解码设置",
+  description = "global request/response character encoding process",
   filterName = "GLOBAL_CHARSET_ENCODING_FILTER"
 )
 public class GlobalEncodingInterceptor extends HttpFilter {

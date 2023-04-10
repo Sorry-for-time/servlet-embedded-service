@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.shalling.dev.init.StartApplicationServer;
 
 /**
+ * a simple tomcat embedded service entry
+ *
  * @author Shalling
  * @version v0.01
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
