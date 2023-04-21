@@ -1,6 +1,6 @@
-package framework.annotationHandler.urilMapping;
+package framework.handler.urilMapping;
 
-import framework.annotationHandler.controllerMapping.RouteMethodRecord;
+import framework.handler.controllerMapping.RouteMethodRecord;
 import framework.util.AnnotationMatchedHandler;
 
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
-package framework.annotationHandler.paramsMapping;
+package framework.handler.paramsMapping;
 
-import framework.annotationHandler.controllerMapping.RouteMethodRecord;
+import framework.handler.controllerMapping.RouteMethodRecord;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

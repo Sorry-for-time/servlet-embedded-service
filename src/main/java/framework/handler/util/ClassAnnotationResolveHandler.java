@@ -1,4 +1,4 @@
-package framework.annotationHandler.util;
+package framework.handler.util;
 
 import framework.util.AnnotationMatchedHandler;
 

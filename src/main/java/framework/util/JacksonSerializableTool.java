@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
  * @since 2023/4/8 22:08
  */
-public class JSONSerializableTool implements Serializable {
+public class JacksonSerializableTool implements Serializable {
   @Serial
   private static final long serialVersionUID = 3566755931937058990L;
 

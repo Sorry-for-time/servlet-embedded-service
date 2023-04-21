@@ -1,4 +1,4 @@
-package framework.annotationHandler.controllerMapping;
+package framework.handler.controllerMapping;
 
 import java.lang.reflect.Method;
 

@@ -1,15 +1,15 @@
-package framework.annotationHandler.urilMapping;
+package framework.handler.urilMapping;
 
-import framework.annotationHandler.controllerMapping.RouteMethodRecord;
-import framework.stereotype.methodMapping.GetMappingLeft;
-import framework.stereotype.methodMapping.PostMappingLeft;
+import framework.handler.controllerMapping.RouteMethodRecord;
+import framework.stereotype.method.GetMappingLeft;
+import framework.stereotype.method.PostMappingLeft;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import static framework.annotationHandler.urilMapping.RouteURIMapping.resolveAllChildRoutes;
+import static framework.handler.urilMapping.RouteURIMapping.resolveAllChildRoutes;
 
 /**
  * 匹配被 RestControllerLeft 标注的 Controller 下所有被 GET 和 POST 请求注解标记的方法

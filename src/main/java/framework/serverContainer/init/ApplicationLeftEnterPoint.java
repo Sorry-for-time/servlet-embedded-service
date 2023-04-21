@@ -78,9 +78,8 @@ public final class ApplicationLeftEnterPoint implements Serializable {
 
     try {
       tomcat.start();
-      tomcat
-        .getServer()
-        .await();
+      org.apache.catalina.Server server = tomcat.getServer();
+      server.await();
     } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException(e);

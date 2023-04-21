@@ -1,4 +1,4 @@
-package framework.stereotype.methodMapping;
+package framework.stereotype.method;
 
 import java.lang.annotation.*;
 

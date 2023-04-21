@@ -20,7 +20,7 @@ public class MainTest {
     );
 
     recordMap.forEach((k, v) -> {
-      System.out.println(k + " --->  " + v.requestMethod());
+      System.out.println(k + " --->  " + v.requestMethodType());
     });
   }
 }

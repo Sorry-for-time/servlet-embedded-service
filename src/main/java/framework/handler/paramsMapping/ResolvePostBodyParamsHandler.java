@@ -1,4 +1,4 @@
-package framework.annotationHandler.paramsMapping;
+package framework.handler.paramsMapping;
 
 /**
  * @author Shalling

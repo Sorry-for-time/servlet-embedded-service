@@ -1,4 +1,4 @@
-package framework.stereotype.paramHandler;
+package framework.stereotype.params;
 
 import java.lang.annotation.*;
 
