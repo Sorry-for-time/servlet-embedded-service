@@ -1,4 +1,11 @@
+# 服务器配置
 server:
   port: 9043
   hostName: www.shalling.me
   serverName: SHALLING-SERVER
+#  数据库
+dataSource:
+  driver: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql//192.168.220.140:33060/pretty_blog
+  user: root
+  password: 1234
