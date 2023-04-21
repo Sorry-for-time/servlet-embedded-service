@@ -39,3 +39,6 @@ build/
 .DS_Store
 
 tomcat.*
+
+# exclude local devlopment file
+.dev/
