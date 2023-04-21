@@ -1,4 +1,4 @@
-package framework.handler.rest;
+package framework.annotationHandler.rest;
 
 /**
  * @author Shalling
