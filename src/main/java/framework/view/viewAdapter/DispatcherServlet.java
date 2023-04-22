@@ -8,61 +8,46 @@ import framework.handler.urilMapping.ResolveMethodsURIMapping;
 import framework.util.GsonSerializableTool;
 import framework.view.FrameworkServlet;
 import framework.view.util.ServletRequestExtractTool;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Shalling
- * @version v0.01
- * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
- * @since 2023/4/20 0:05
- */
-@WebServlet(urlPatterns = "/*", loadOnStartup = 0)
-public class GlobalURLResolver extends FrameworkServlet {
+public class DispatcherServlet extends FrameworkServlet {
   @Serial
   private static final long serialVersionUID = 935062138257489247L;
-  public static final String ERROR_HTML_TEMPLATE = """
-    <!DOCTYPE html>
-    <html lang="zh">
-      <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Failure</title>
-        <style>
-          html,
-          body {
-            margin: 0;
-            padding: 0;
-            background-color: hsl(0, 0%, 9%);
-          }
-          h1 {
-            color: white;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>WE ARE TOO SORRY, BUT CURRENT REQUEST: ${reason} DOES NOT SUPPORT</h1>
-      </body>
-    </html>
-    """;
+  public static final String NOTFOUND_RESOURCE_TEMPLATE;
+
+  static {
+    try (
+      InputStream stream = DispatcherServlet.class.getClassLoader().getResourceAsStream("default-presets/NotFound.html")
+    ) {
+      if (stream != null) {
+        NOTFOUND_RESOURCE_TEMPLATE = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+      } else {
+        throw new RuntimeException("the temple file not found!");
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   private final Map<String, RouteMethodRecord> uriMethodsMapping;
 
   private final Set<String> supportedMethods;
 
   private final FullUriCallingChain uriCallingChain;
 
-  public GlobalURLResolver() {
+  public DispatcherServlet() {
     super();
     this.supportedMethods = new HashSet<>();
     this.supportedMethods.add("GET");
@@ -139,7 +124,10 @@ public class GlobalURLResolver extends FrameworkServlet {
   ) throws IOException {
     try (PrintWriter writer = response.getWriter()) {
       response.setContentType("text/html");
-      writer.write(ERROR_HTML_TEMPLATE.replace("${reason}", request.getRequestURI()));
+      String html = NOTFOUND_RESOURCE_TEMPLATE
+        .replace("${replace-title}", request.getRequestURI() + " not found")
+        .replace("${reason}", request.getRequestURL());
+      writer.write(html);
     }
   }
 }

@@ -4,6 +4,7 @@ import framework.serverContainer.init.config.ApplicationConfig;
 import framework.serverContainer.init.config.base.Server;
 import framework.serverContainer.init.egg.BannerOutput;
 import framework.serverContainer.init.egg.ConsoleColors;
+import framework.view.viewAdapter.DispatcherServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
@@ -15,6 +16,7 @@ import org.apache.catalina.webresources.StandardRoot;
 import java.io.File;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * @author Shalling
@@ -31,11 +33,13 @@ public final class ApplicationLeftEnterPoint implements Serializable {
   public static final String DEFAULT_HOSTNAME = "localhost";
   public static final String STORE_DIR = System.getProperty("user.dir") + "/target";
   public static final String WEBAPP_PATHNAME = "./";
+  public static final String CONTEXT_PATH = "";
 
   /**
    * 启动 tomcat 容器服务
    */
   public static void start(String... args) {
+    System.out.println(Arrays.toString(args));
     ApplicationConfig configurationSingleton = ConfigProvider.getConfiguration();
     Server serverConfigDetail = configurationSingleton.getServer();
     BannerOutput.displayBanner(configurationSingleton);
@@ -63,14 +67,20 @@ public final class ApplicationLeftEnterPoint implements Serializable {
 
     StandardContext context = (StandardContext) tomcat
       .addWebapp(
-        "",
+        CONTEXT_PATH,
         new File(WEBAPP_PATHNAME).getAbsolutePath()
       );
+
     context.setSessionCookiePathUsesTrailingSlash(true);
     context.setSessionCookieName("JSESSIONID");
     context.setUseHttpOnly(true);
     context.setCookies(true);
     setupResource(context);
+
+    // 添加全局视图处理
+    DispatcherServlet dispatcherServlet = new DispatcherServlet();
+    tomcat.addServlet(CONTEXT_PATH, "DispatcherServlet", dispatcherServlet);
+    context.addServletMappingDecoded("/*", "DispatcherServlet");
 
     Connector connector = tomcat.getConnector();
     connector.setAllowTrace(true);
@@ -92,7 +102,7 @@ public final class ApplicationLeftEnterPoint implements Serializable {
    * @param context 上限=下文对象配置
    */
   private static void setupResource(StandardContext context) {
-    System.out.println(ConsoleColors.TEXT_BRIGHT_PURPLE + "WORK HOME: " + WORK_HOME + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_PURPLE + "WORK_HOME: " + WORK_HOME + ConsoleColors.TEXT_RESET);
     File classedDir = new File(WORK_HOME, "target/classes");
     File jarDir = new File(WORK_HOME, "");
     var resourceRoot = new StandardRoot(context);
