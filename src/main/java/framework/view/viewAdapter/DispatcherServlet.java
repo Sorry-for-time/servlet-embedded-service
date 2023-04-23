@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class DispatcherServlet extends FrameworkServlet {
+  public static final String NOTFOUND_RESOURCE_TEMPLATE;
   @Serial
   private static final long serialVersionUID = 935062138257489247L;
-  public static final String NOTFOUND_RESOURCE_TEMPLATE;
 
   static {
     try (

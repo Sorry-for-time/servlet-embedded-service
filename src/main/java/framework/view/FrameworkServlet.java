@@ -30,7 +30,7 @@ public abstract class FrameworkServlet extends HttpServlet {
   }
 
   /**
-   // * 请求是否请求
+   * // * 请求是否请求
    *
    * @param request http 请求头信息
    * @return 访问资源有效性
