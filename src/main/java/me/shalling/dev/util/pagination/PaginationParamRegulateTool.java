@@ -29,18 +29,18 @@ public final class PaginationParamRegulateTool implements Serializable {
     /**
      * 当前页
      */
-    private Long currentPage;
+    private Integer currentPage;
 
     /**
      * 显示条数
      */
-    private Long size;
+    private Integer size;
 
     /**
      * 总记录数
      */
     @NonNull
-    private Long rows;
+    private Integer rows;
   }
 
   /**
@@ -52,22 +52,22 @@ public final class PaginationParamRegulateTool implements Serializable {
    */
   public static PaginationParamsRequire getLegalPaginationParam(
     PaginationParamsRequire paramsRequire,
-    long allowedMaxSize
+    Integer allowedMaxSize
   ) {
     // 获取读取到的参数项
-    Long size = paramsRequire.size;
-    Long currentPage = paramsRequire.currentPage;
-    Long rows = paramsRequire.rows;
+    Integer size = paramsRequire.size;
+    Integer currentPage = paramsRequire.currentPage;
+    Integer rows = paramsRequire.rows;
 
     // 如果每页显示条数为 0, 就设置一个初始值
     if (size == null || size < 1) {
-      size = 10L;
-      currentPage = 1L;
+      size = 10;
+      currentPage = 1;
     }
 
     // 如果当前页非法, 那么就设置一个初始值
     if (currentPage == null || currentPage < 1) {
-      currentPage = 1L;
+      currentPage = 1;
     }
 
     // 如果每页显示条数超过了允许的最大数, 那么就设置为最大数
@@ -80,7 +80,7 @@ public final class PaginationParamRegulateTool implements Serializable {
       // 如果存在记录数
       if (rows > 0) {
         // 获取尾号页数
-        long tmp = rows / size;
+        int tmp = rows / size;
 
         // 获取尾页剩余条数
         long leavedValue = rows % size;
@@ -95,12 +95,12 @@ public final class PaginationParamRegulateTool implements Serializable {
             currentPage = tmp;
           }
         } else {
-          currentPage = 1L;
+          currentPage = 1;
         }
       }
       // 如果 记录数*页数 超过实际记录数, 那么直接设置成第一页
       else {
-        currentPage = 1L;
+        currentPage = 1;
       }
     }
 

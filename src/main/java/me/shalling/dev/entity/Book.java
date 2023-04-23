@@ -34,7 +34,7 @@ public class Book {
 
   private String author;
 
-  private String stock;
+  private Integer stock;
 
   private String address;
 }

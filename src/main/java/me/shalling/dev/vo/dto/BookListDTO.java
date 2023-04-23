@@ -23,17 +23,17 @@ public class BookListDTO {
   /**
    * 当前页
    */
-  private Long currentPage;
+  private Integer currentPage;
 
   /**
    * 总记录数
    */
-  private Long rows;
+  private Integer rows;
 
   /**
    * 页显示条目数量
    */
-  private Long size;
+  private Integer size;
 
   /**
    * 查询结果

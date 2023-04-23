@@ -1,38 +1,42 @@
 package me.shalling.dev.controller;
 
+import framework.container.config.base.TokenStorage;
 import framework.stereotype.RestControllerLeft;
 import framework.stereotype.method.PostMappingLeft;
 import framework.stereotype.params.PostBody;
+import lombok.Data;
 import me.shalling.dev.constant.StatusCode;
-import me.shalling.dev.service.BookService;
-import me.shalling.dev.service.impl.BookServiceImpl;
+import me.shalling.dev.interceptor.meta.TokenMeta;
 import me.shalling.dev.vo.Result;
-import me.shalling.dev.vo.dto.BookListDTO;
-import me.shalling.dev.vo.dto.PaginationDTO;
+
+import java.util.Map;
 
 /**
  * @author Shalling
  * @version v0.01
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
- * @since 2023/4/23 0:02
+ * @since 2023/4/23 20:31
  */
-@RestControllerLeft("/admin")
+@RestControllerLeft("/admin/user")
 public class AdminController {
-  private final BookService bookService = new BookServiceImpl();
+  private final Map<String, TokenMeta> tokenMapSingleton = TokenStorage.getTokenMapSingleton();
+
+  @Data
+  private final static class LogoutDto {
+    private String token;
+  }
 
   /**
-   * 根据前端传递的分页参数获取所有的
+   * 下线, 就随便写了, 不想写了.....
    *
-   * @param dto 前端传递的分页餐宿
-   * @return 查询结果
-   * @throws Exception 执行发生的异常
+   * @param dto token 信息
+   * @return 随便返回一个信息...
    */
-  @PostMappingLeft("/book-list")
-  public Result<BookListDTO> getBookList(@PostBody PaginationDTO dto)
-    throws Exception {
-    return new Result<BookListDTO>()
-      .setStatusCode(StatusCode.OK)
-      .setMsg("请求成功")
-      .setData(bookService.getBookListByPaginationParams(dto));
+  @PostMappingLeft("/logout")
+  public Result<String> logout(@PostBody LogoutDto dto) {
+    tokenMapSingleton.remove(dto.token);
+    return new Result<String>()
+      .setMsg("删除成功")
+      .setStatusCode(StatusCode.OK);
   }
 }

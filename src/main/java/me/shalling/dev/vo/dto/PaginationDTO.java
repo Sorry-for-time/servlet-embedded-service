@@ -15,10 +15,10 @@ public class PaginationDTO {
   /**
    * 当前页
    */
-  private Long currentPage;
+  private Integer currentPage;
 
   /**
    * 每页大小
    */
-  private Long size;
+  private Integer size;
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 import me.shalling.dev.entity.Book;
 
 /**
@@ -14,9 +13,7 @@ import me.shalling.dev.entity.Book;
  * @since 2023/4/23 0:04
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class BookDTO extends Book {
 }

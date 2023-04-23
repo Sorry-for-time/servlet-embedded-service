@@ -2,10 +2,10 @@ package me.shalling.dev.service.impl;
 
 import me.shalling.dev.dao.BookDAO;
 import me.shalling.dev.service.BookService;
+import me.shalling.dev.vo.dto.BookDTO;
 import me.shalling.dev.vo.dto.BookListDTO;
 import me.shalling.dev.vo.dto.PaginationDTO;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 /**
@@ -19,11 +19,17 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public BookListDTO getBookListByPaginationParams(PaginationDTO paginationDTO)
-    throws SQLException,
-    InvocationTargetException,
-    InstantiationException,
-    IllegalAccessException,
-    NoSuchMethodException {
+    throws Exception {
     return bookDAO.getBookList(paginationDTO);
+  }
+
+  @Override
+  public Integer updateBook(BookDTO dto) throws Exception {
+    return bookDAO.updateBook(dto);
+  }
+
+  @Override
+  public Integer deleteBookByIdList(Integer[] idList) throws SQLException {
+    return bookDAO.deleteBook(idList);
   }
 }

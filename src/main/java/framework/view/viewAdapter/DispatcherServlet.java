@@ -10,6 +10,8 @@ import framework.view.FrameworkServlet;
 import framework.view.util.ServletRequestExtractTool;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import me.shalling.dev.constant.StatusCode;
+import me.shalling.dev.vo.Result;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,15 +19,13 @@ import java.io.PrintWriter;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DispatcherServlet extends FrameworkServlet {
   public static final String NOTFOUND_RESOURCE_TEMPLATE;
   @Serial
   private static final long serialVersionUID = 935062138257489247L;
+  public static final String CONTENT_TYPE = "application/json";
 
   static {
     try (
@@ -84,7 +84,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
   @Override
   public void viewResolver(HttpServletRequest request, HttpServletResponse response) {
-    response.setContentType("application/json");
+    response.setContentType(CONTENT_TYPE);
+
     String requestURI = request.getRequestURI();
     FullUriCallingChain.InvokerDetail invokerDetail = this.uriCallingChain.uriInvokerDetailMap.get(requestURI);
     Class<?> methodReturnType = invokerDetail.methodReturnType;
@@ -95,25 +96,39 @@ public class DispatcherServlet extends FrameworkServlet {
     Object[] methodParams = new Object[parameterTypeList.size()];
 
     Object returnValue;
+    PrintWriter writer = null;
     try {
+      writer = response.getWriter();
       if (parameterTypeList.size() > 0) {
         String requestJSONData = ServletRequestExtractTool.getRequestJSONData(request);
-        System.out.println("parameterTypeList.get(0): " + parameterTypeList.get(0));
-        System.out.println(requestJSONData);
+        System.out.println("requestJSONData: " + requestJSONData);
         Object o = GsonSerializableTool.JSONToObject(requestJSONData, parameterTypeList.get(0));
         methodParams[0] = o;
+        System.out.println("provider params" + Arrays.toString(methodParams));
+        System.out.println("require parameters: " + Arrays.toString(routeMethodRecord.uriRelativeMethod().getParameters()));
         returnValue = routeMethodRecord.uriRelativeMethod().invoke(methodInvokerObject, methodParams);
       } else {
         returnValue = routeMethodRecord.uriRelativeMethod().invoke(methodInvokerObject);
       }
       if (methodReturnType != void.class) {
         String json = GsonSerializableTool.objectToJSON(returnValue);
-        PrintWriter writer = response.getWriter();
         writer.write(json);
         writer.close();
       }
     } catch (IOException | InvocationTargetException | IllegalAccessException e) {
-      throw new RuntimeException(e);
+      Result<String> errorResponse = new Result<String>()
+        .setData(e.getCause().getMessage())
+        .setMsg("请求错误")
+        .setStatusCode(StatusCode.UN_KNOW_REASON);
+
+      if (writer != null) {
+        writer.write(GsonSerializableTool.objectToJSON(errorResponse));
+      }
+      e.printStackTrace();
+    } finally {
+      if (writer != null) {
+        writer.close();
+      }
     }
   }
 
@@ -124,10 +139,10 @@ public class DispatcherServlet extends FrameworkServlet {
   ) throws IOException {
     try (PrintWriter writer = response.getWriter()) {
       response.setContentType("text/html");
-      String html = NOTFOUND_RESOURCE_TEMPLATE
+      String htmlTemplate = NOTFOUND_RESOURCE_TEMPLATE
         .replace("${replace-title}", request.getRequestURI() + " not found")
         .replace("${reason}", request.getRequestURL());
-      writer.write(html);
+      writer.write(htmlTemplate);
     }
   }
 }
