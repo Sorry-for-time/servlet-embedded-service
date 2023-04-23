@@ -6,6 +6,10 @@ server:
 #  数据库
 dataSource:
   driver: com.mysql.cj.jdbc.Driver
-  url: jdbc:mysql//192.168.220.140:33060/pretty_blog
+  url: jdbc:mysql://192.168.220.140:33060/tb_library
   user: root
   password: 1234
+  max: 12
+# token 设置(单位: ms)
+tokenConfig:
+  expire: 86400000

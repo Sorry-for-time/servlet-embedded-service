@@ -1,1 +1,1 @@
-framework.serverContainer.init.WebApplicationServletContainerInitializer
+framework.container.WebApplicationServletContainerInitializer
