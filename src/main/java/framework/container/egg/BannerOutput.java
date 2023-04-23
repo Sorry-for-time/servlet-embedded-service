@@ -1,7 +1,7 @@
-package framework.serverContainer.init.egg;
+package framework.container.egg;
 
-import framework.serverContainer.init.config.base.Server;
-import framework.serverContainer.init.config.ApplicationConfig;
+import framework.container.config.ApplicationConfig;
+import framework.container.config.base.Server;
 
 import java.io.IOException;
 import java.io.InputStream;

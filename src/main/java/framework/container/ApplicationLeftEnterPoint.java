@@ -1,9 +1,9 @@
-package framework.serverContainer.init;
+package framework.container;
 
-import framework.serverContainer.init.config.ApplicationConfig;
-import framework.serverContainer.init.config.base.Server;
-import framework.serverContainer.init.egg.BannerOutput;
-import framework.serverContainer.init.egg.ConsoleColors;
+import framework.container.config.ApplicationConfig;
+import framework.container.config.base.Server;
+import framework.container.egg.BannerOutput;
+import framework.container.egg.ConsoleColors;
 import framework.view.viewAdapter.DispatcherServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
@@ -27,13 +27,13 @@ import java.util.Arrays;
 @Slf4j
 public final class ApplicationLeftEnterPoint implements Serializable {
   public static final String WORK_HOME = System.getProperty("user.dir");
-  @Serial
-  private static final long serialVersionUID = -6432398288697156075L;
   public static final int DEFAULT_PORT = 8080;
   public static final String DEFAULT_HOSTNAME = "localhost";
   public static final String STORE_DIR = System.getProperty("user.dir") + "/target";
   public static final String WEBAPP_PATHNAME = "./";
   public static final String CONTEXT_PATH = "";
+  @Serial
+  private static final long serialVersionUID = -6432398288697156075L;
 
   /**
    * 启动 tomcat 容器服务

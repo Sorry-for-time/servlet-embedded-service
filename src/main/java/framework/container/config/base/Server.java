@@ -1,4 +1,4 @@
-package framework.serverContainer.init.config.base;
+package framework.container.config.base;
 
 import lombok.Data;
 

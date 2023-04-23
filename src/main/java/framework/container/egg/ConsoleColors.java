@@ -1,4 +1,4 @@
-package framework.serverContainer.init.egg;
+package framework.container.egg;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -7,9 +7,6 @@ import java.io.Serializable;
  * log 输出颜色配置
  */
 public final class ConsoleColors implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 6486878329299941266L;
-
   public static final String TEXT_RESET = "\u001B[0m";
   public static final String TEXT_BLACK = "\u001B[30m";
   public static final String TEXT_RED = "\u001B[31m";
@@ -43,4 +40,6 @@ public final class ConsoleColors implements Serializable {
   public static final String TEXT_BRIGHT_BG_PURPLE = "\u001B[105m";
   public static final String TEXT_BRIGHT_BG_CYAN = "\u001B[106m";
   public static final String TEXT_BRIGHT_BG_WHITE = "\u001B[107m";
+  @Serial
+  private static final long serialVersionUID = 6486878329299941266L;
 }

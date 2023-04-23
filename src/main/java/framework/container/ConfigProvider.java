@@ -1,6 +1,6 @@
-package framework.serverContainer.init;
+package framework.container;
 
-import framework.serverContainer.init.config.ApplicationConfig;
+import framework.container.config.ApplicationConfig;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;

@@ -1,7 +1,8 @@
-package framework.serverContainer.init.config;
+package framework.container.config;
 
-import framework.serverContainer.init.config.base.DataSource;
-import framework.serverContainer.init.config.base.Server;
+import framework.container.config.base.DataSource;
+import framework.container.config.base.Server;
+import framework.container.config.base.TokenConfig;
 import lombok.Data;
 
 import java.io.Serial;
@@ -23,4 +24,6 @@ public class ApplicationConfig implements Serializable {
   private Server server;
 
   private DataSource dataSource;
+
+  private TokenConfig tokenConfig;
 }

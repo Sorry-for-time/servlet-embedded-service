@@ -1,4 +1,4 @@
-package framework.serverContainer.init.config.base;
+package framework.container.config.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,11 +16,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DataSource {
+  /**
+   * 驱动路径
+   */
   private String driver;
 
+  /**
+   * 连接 url
+   */
   private String url;
 
+  /**
+   * 用户
+   */
   private String user;
 
+  /**
+   * 密码
+   */
   private String password;
+
+  /**
+   * 最大连接数
+   */
+  private Integer max = 8;
 }

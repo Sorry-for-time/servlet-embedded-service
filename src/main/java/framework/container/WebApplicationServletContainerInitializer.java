@@ -1,6 +1,6 @@
-package framework.serverContainer.init;
+package framework.container;
 
-import framework.serverContainer.init.config.ApplicationConfig;
+import framework.container.config.ApplicationConfig;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,10 @@ import java.util.Set;
  */
 @Slf4j
 public final class WebApplicationServletContainerInitializer implements Serializable, ServletContainerInitializer {
-  @Serial
-  private static final long serialVersionUID = 1177834535244014444L;
   public static final String SERVER_NAME = "SHALLING_SERVER";
   public static final String VERSION = "V0.01";
+  @Serial
+  private static final long serialVersionUID = 1177834535244014444L;
 
   @Override
   public void onStartup(Set<Class<?>> c, ServletContext ctx) {
