@@ -1,6 +1,6 @@
 package me.shalling.dev;
 
-import framework.serverContainer.init.ApplicationLeftEnterPoint;
+import framework.container.ApplicationLeftEnterPoint;
 import framework.stereotype.ApplicationLeft;
 
 /**
