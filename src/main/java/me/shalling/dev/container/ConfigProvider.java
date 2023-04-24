@@ -28,9 +28,9 @@ public class ConfigProvider implements Serializable {
   }
 
   /**
-   * get user custom properties from file, just load once, more operation is idempotent(singleton instance)
+   * 获取配置实例对象, 该对象的获取是幂等的(单例模式)
    *
-   * @return load server config from `application.yml`
+   * @return 从配置文件当中读取的配置文件
    */
   public static ApplicationConfig getConfiguration() {
     if (applicationConfig == null) {

@@ -7,7 +7,6 @@ import me.shalling.dev.service.status.UserVerifyStatus;
 import me.shalling.dev.vo.dto.LoginDTO;
 import me.shalling.dev.vo.dto.UserDTO;
 
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -27,7 +26,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserVerifyStatus verifyUser(@NotNull LoginDTO dto, User user) {
+  public UserVerifyStatus verifyUser(LoginDTO dto, User user) {
     boolean matched;
     String msg;
     if (user == null) {
