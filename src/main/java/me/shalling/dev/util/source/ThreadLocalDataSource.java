@@ -1,7 +1,7 @@
 package me.shalling.dev.util.source;
 
-import framework.container.ConfigProvider;
-import framework.container.config.base.DataSource;
+import me.shalling.dev.container.ConfigProvider;
+import me.shalling.dev.container.config.base.DataSource;
 import me.shalling.dev.util.source.impl.ConnectionPoolImpl;
 
 import java.io.Serial;

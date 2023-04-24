@@ -1,6 +1,6 @@
-package framework.container;
+package me.shalling.dev.container;
 
-import framework.container.config.ApplicationConfig;
+import me.shalling.dev.container.config.ApplicationConfig;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;

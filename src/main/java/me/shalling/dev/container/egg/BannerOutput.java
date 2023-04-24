@@ -1,7 +1,7 @@
-package framework.container.egg;
+package me.shalling.dev.container.egg;
 
-import framework.container.config.ApplicationConfig;
-import framework.container.config.base.Server;
+import me.shalling.dev.container.config.ApplicationConfig;
+import me.shalling.dev.container.config.base.Server;
 
 import java.io.IOException;
 import java.io.InputStream;

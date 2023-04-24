@@ -1,12 +1,13 @@
 package me.shalling.dev.interceptor;
 
-import framework.container.config.base.TokenStorage;
+import me.shalling.dev.container.config.base.TokenStorage;
 import framework.util.GsonSerializableTool;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import me.shalling.dev.config.GlobalSymbol;
 import me.shalling.dev.constant.StatusCode;
 import me.shalling.dev.interceptor.meta.TokenMeta;
 import me.shalling.dev.util.source.ThreadLocalDataSource;
@@ -30,12 +31,6 @@ import java.util.Map;
 public class AdminRequestInterceptor extends HttpFilter {
   @Serial
   private static final long serialVersionUID = -2133082575529882131L;
-  public static final String JSON_TYPE = "application/json";
-
-  /**
-   * token 请求头标识
-   */
-  public static final String HEADER_TOKEN = "auth-token";
 
   private final Map<String, TokenMeta> TOKEN_MAP = TokenStorage.getTokenMapSingleton();
 
@@ -49,7 +44,7 @@ public class AdminRequestInterceptor extends HttpFilter {
     response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
     // 获取请求头信息
-    String receivedToken = request.getHeader(HEADER_TOKEN);
+    String receivedToken = request.getHeader(GlobalSymbol.HEADER_TOKEN_NAME);
     System.out.println(receivedToken);
 
     // 是否允许本次访问
@@ -61,7 +56,7 @@ public class AdminRequestInterceptor extends HttpFilter {
       if (tokenMeta == null) {
         requestAccessible = false;
       } else {
-        // 判断 token 时间是否有效
+        // 判断 token 是否过期
         long currentTime = System.currentTimeMillis();
         requestAccessible = tokenMeta.getCratedTime() + tokenMeta.getExpiredTime() > currentTime;
 
@@ -92,7 +87,7 @@ public class AdminRequestInterceptor extends HttpFilter {
         try (
           PrintWriter writer = response.getWriter()
         ) {
-          response.setContentType(JSON_TYPE);
+          response.setContentType(GlobalSymbol.RESPONSE_JSON);
           Result<String> responseHandler = new Result<String>()
             .setStatusCode(StatusCode.PERMISSION_FORBIDDEN)
             .setData("请登录后再进行操作")

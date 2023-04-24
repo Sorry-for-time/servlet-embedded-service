@@ -1,4 +1,4 @@
-package framework.container.egg;
+package me.shalling.dev.container.egg;
 
 import java.io.Serial;
 import java.io.Serializable;

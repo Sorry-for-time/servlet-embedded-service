@@ -10,6 +10,7 @@ import framework.view.FrameworkServlet;
 import framework.view.util.ServletRequestExtractTool;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import me.shalling.dev.config.GlobalSymbol;
 import me.shalling.dev.constant.StatusCode;
 import me.shalling.dev.vo.Result;
 
@@ -25,7 +26,6 @@ public class DispatcherServlet extends FrameworkServlet {
   public static final String NOTFOUND_RESOURCE_TEMPLATE;
   @Serial
   private static final long serialVersionUID = 935062138257489247L;
-  public static final String CONTENT_TYPE = "application/json";
 
   static {
     try (
@@ -43,16 +43,17 @@ public class DispatcherServlet extends FrameworkServlet {
 
   private final Map<String, RouteMethodRecord> uriMethodsMapping;
 
+  /**
+   * 用于设置请所支持的方法
+   */
   private final Set<String> supportedMethods;
 
   private final FullUriCallingChain uriCallingChain;
 
-  public DispatcherServlet() {
+  public DispatcherServlet(String... methods) {
     super();
     this.supportedMethods = new HashSet<>();
-    this.supportedMethods.add("GET");
-    this.supportedMethods.add("POST");
-    for (String supportedMethod : supportedMethods) {
+    for (String supportedMethod : methods) {
       this.supportedMethods.add(supportedMethod.toUpperCase());
     }
 
@@ -84,7 +85,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
   @Override
   public void viewResolver(HttpServletRequest request, HttpServletResponse response) {
-    response.setContentType(CONTENT_TYPE);
+    response.setContentType(GlobalSymbol.RESPONSE_JSON);
 
     String requestURI = request.getRequestURI();
     FullUriCallingChain.InvokerDetail invokerDetail = this.uriCallingChain.uriInvokerDetailMap.get(requestURI);
@@ -120,7 +121,6 @@ public class DispatcherServlet extends FrameworkServlet {
         .setData(e.getCause().getMessage())
         .setMsg("请求错误")
         .setStatusCode(StatusCode.UN_KNOW_REASON);
-
       if (writer != null) {
         writer.write(GsonSerializableTool.objectToJSON(errorResponse));
       }

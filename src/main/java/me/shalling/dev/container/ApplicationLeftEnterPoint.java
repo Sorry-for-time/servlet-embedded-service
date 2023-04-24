@@ -1,9 +1,9 @@
-package framework.container;
+package me.shalling.dev.container;
 
-import framework.container.config.ApplicationConfig;
-import framework.container.config.base.Server;
-import framework.container.egg.BannerOutput;
-import framework.container.egg.ConsoleColors;
+import me.shalling.dev.container.config.ApplicationConfig;
+import me.shalling.dev.container.config.base.Server;
+import me.shalling.dev.container.egg.BannerOutput;
+import me.shalling.dev.container.egg.ConsoleColors;
 import framework.view.viewAdapter.DispatcherServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
@@ -34,12 +34,13 @@ public final class ApplicationLeftEnterPoint implements Serializable {
   public static final String CONTEXT_PATH = "";
   @Serial
   private static final long serialVersionUID = -6432398288697156075L;
+  public static final String TOMCAT_THREADS = "-tomcat-threads=";
 
   /**
    * 启动 tomcat 容器服务
    */
   public static void start(String... args) {
-    System.out.println(Arrays.toString(args));
+    System.out.println("initial params: " + Arrays.toString(args));
     ApplicationConfig configurationSingleton = ConfigProvider.getConfiguration();
     Server serverConfigDetail = configurationSingleton.getServer();
     BannerOutput.displayBanner(configurationSingleton);
@@ -48,6 +49,18 @@ public final class ApplicationLeftEnterPoint implements Serializable {
     Tomcat tomcat = new Tomcat();
     tomcat.setBaseDir(STORE_DIR);
     tomcat.setAddDefaultWebXmlToWebapp(false);
+
+    // 从命令行获取参数
+    for (String arg : args) {
+      if (arg != null) {
+        if (arg.startsWith(TOMCAT_THREADS)) {
+          int threadCount = Integer.parseInt(arg.substring(TOMCAT_THREADS.length()));
+          tomcat.getServer().setUtilityThreads(threadCount);
+          System.out.println(ConsoleColors.TEXT_GREEN + "tomcat server set setUtilityThreads: " + threadCount + ConsoleColors.TEXT_RESET);
+          break;
+        }
+      }
+    }
 
     if (serverConfigDetail != null) {
       if (serverConfigDetail.getPort() != null) {
@@ -78,7 +91,7 @@ public final class ApplicationLeftEnterPoint implements Serializable {
     setupResource(context);
 
     // 添加全局视图处理
-    DispatcherServlet dispatcherServlet = new DispatcherServlet();
+    DispatcherServlet dispatcherServlet = new DispatcherServlet("GET", "POST");
     tomcat.addServlet(CONTEXT_PATH, "DispatcherServlet", dispatcherServlet);
     context.addServletMappingDecoded("/*", "DispatcherServlet");
 

@@ -33,7 +33,6 @@ public class BookController {
   @PostMappingLeft("/book-list")
   public Result<BookListDTO> getBookList(@PostBody PaginationDTO dto)
     throws Exception {
-    System.out.println("@PostBody PaginationDTO dto ----->  " + dto);
     return new Result<BookListDTO>()
       .setStatusCode(StatusCode.OK)
       .setMsg("请求成功")

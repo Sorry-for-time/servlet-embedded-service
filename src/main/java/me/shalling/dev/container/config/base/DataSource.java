@@ -1,4 +1,4 @@
-package framework.container.config.base;
+package me.shalling.dev.container.config.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

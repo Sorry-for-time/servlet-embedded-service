@@ -1,6 +1,6 @@
-package framework.container;
+package me.shalling.dev.container;
 
-import framework.container.config.ApplicationConfig;
+import me.shalling.dev.container.config.ApplicationConfig;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
