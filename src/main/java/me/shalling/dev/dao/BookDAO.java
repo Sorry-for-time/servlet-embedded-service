@@ -57,8 +57,8 @@ public class BookDAO {
           rows
         ), 100
       );
-    Connection connection = ThreadLocalDataSource.getConnection();
 
+    Connection connection = ThreadLocalDataSource.getConnection();
     String sql = """
       SELECT id, typeId, name, price, description, pic, publish, author, stock, address FROM  tb_book LIMIT ?, ?
       """;
@@ -77,10 +77,9 @@ public class BookDAO {
    *
    * @param bookDTO 新的书籍信息
    * @return 影响行数
-   * @throws Exception 执行异常
    */
-  public Integer updateBook(BookDTO bookDTO) throws SQLException {
-    Connection connection = null;
+  public Integer updateBook(BookDTO bookDTO) {
+    Connection connection;
     try {
       connection = ThreadLocalDataSource.getConnection();
       int effectedRows;
@@ -100,18 +99,14 @@ public class BookDAO {
       preparedStatement.setObject(9, bookDTO.getAddress());
       preparedStatement.setObject(10, bookDTO.getId());
       effectedRows = preparedStatement.executeUpdate();
-      connection.commit();
       return effectedRows;
     } catch (Exception e) {
-      if (connection != null) {
-        connection.rollback();
-      }
       throw new RuntimeException(e);
     }
   }
 
-  public Integer deleteBook(Integer[] idList) throws SQLException {
-    Connection connection = null;
+  public Integer deleteBook(Integer[] idList) {
+    Connection connection;
     try {
       connection = ThreadLocalDataSource.getConnection();
       String sql = """
@@ -125,9 +120,6 @@ public class BookDAO {
       int[] ints = preparedStatement.executeBatch();
       return Arrays.stream(ints).reduce(0, Integer::sum);
     } catch (Exception e) {
-      if (connection != null) {
-        connection.rollback();
-      }
       throw new RuntimeException(e);
     }
   }

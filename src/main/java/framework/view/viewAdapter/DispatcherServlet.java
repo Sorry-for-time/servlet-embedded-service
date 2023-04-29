@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.shalling.dev.config.GlobalSymbol;
 import me.shalling.dev.constant.StatusCode;
+import me.shalling.dev.util.CloseableTool;
 import me.shalling.dev.util.source.ThreadLocalDataSource;
 import me.shalling.dev.vo.Result;
 
@@ -125,12 +126,18 @@ public class DispatcherServlet extends FrameworkServlet {
       } else {
         returnValue = routeMethodRecord.uriRelativeMethod().invoke(methodInvokerObject);
       }
+      // 返回类型不为 void, 就写入转换为 json 返回
       if (methodReturnType != void.class) {
         String json = GsonSerializableTool.objectToJSON(returnValue);
         writer.write(json);
         writer.close();
       }
-    } catch (IOException | InvocationTargetException | IllegalAccessException e) {
+    } catch (IOException |
+             InvocationTargetException |
+             IllegalAccessException |
+             SQLException e
+    ) {
+      // 错误信息处理
       Result<String> errorResponse = new Result<String>()
         .setData(e.getCause().getMessage())
         .setMsg("请求错误")
@@ -139,16 +146,22 @@ public class DispatcherServlet extends FrameworkServlet {
         writer.write(GsonSerializableTool.objectToJSON(errorResponse));
       }
       e.printStackTrace();
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException(e);
+
+      // 统一回滚
+      try {
+        if (connection != null) {
+          connection.rollback();
+        }
+      } catch (SQLException ex) {
+        ex.printStackTrace();
+      }
     } finally {
       if (writer != null) {
-        writer.close();
+        CloseableTool.closeAll(writer);
       }
-      // 回收连接
-      System.out.println("release the connection: " + connection);
       try {
+        // 回收连接
+        System.out.println("release the connection: " + connection);
         ThreadLocalDataSource.close();
       } catch (SQLException e) {
         e.printStackTrace();
