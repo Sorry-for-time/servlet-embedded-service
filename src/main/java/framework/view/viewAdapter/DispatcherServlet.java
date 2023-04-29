@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.shalling.dev.config.GlobalSymbol;
 import me.shalling.dev.constant.StatusCode;
+import me.shalling.dev.util.source.ThreadLocalDataSource;
 import me.shalling.dev.vo.Result;
 
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.io.PrintWriter;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 public class DispatcherServlet extends FrameworkServlet {
@@ -27,9 +30,12 @@ public class DispatcherServlet extends FrameworkServlet {
   @Serial
   private static final long serialVersionUID = 935062138257489247L;
 
+  // 初始化静态资源
   static {
     try (
-      InputStream stream = DispatcherServlet.class.getClassLoader().getResourceAsStream("default-presets/NotFound.html")
+      InputStream stream = DispatcherServlet
+        .class.getClassLoader()
+        .getResourceAsStream("default-presets/NotFound.html")
     ) {
       if (stream != null) {
         NOTFOUND_RESOURCE_TEMPLATE = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
@@ -41,6 +47,9 @@ public class DispatcherServlet extends FrameworkServlet {
     }
   }
 
+  /**
+   * 所有的 mapping 路径映射
+   */
   private final Map<String, RouteMethodRecord> uriMethodsMapping;
 
   /**
@@ -61,7 +70,8 @@ public class DispatcherServlet extends FrameworkServlet {
       .collectAllRestControllerTaggedClass("me.shalling.dev.controller");
     this.uriMethodsMapping = ResolveMethodsURIMapping
       .resolveAllControllerURIAnnotatedMapping(topiControllerMapping);
-    this.uriCallingChain = MethodParamsAdapter.resolveAllParamsTypeAndAssociation(this.uriMethodsMapping);
+    this.uriCallingChain = MethodParamsAdapter
+      .resolveAllParamsTypeAndAssociation(this.uriMethodsMapping);
   }
 
   @Override
@@ -86,7 +96,6 @@ public class DispatcherServlet extends FrameworkServlet {
   @Override
   public void viewResolver(HttpServletRequest request, HttpServletResponse response) {
     response.setContentType(GlobalSymbol.RESPONSE_JSON);
-
     String requestURI = request.getRequestURI();
     FullUriCallingChain.InvokerDetail invokerDetail = this.uriCallingChain.uriInvokerDetailMap.get(requestURI);
     Class<?> methodReturnType = invokerDetail.methodReturnType;
@@ -98,7 +107,12 @@ public class DispatcherServlet extends FrameworkServlet {
 
     Object returnValue;
     PrintWriter writer = null;
+    Connection connection = null;
+
     try {
+      // 为当前线程分配数据库连接
+      connection = ThreadLocalDataSource.getConnection();
+      System.out.println("get the connection: " + connection);
       writer = response.getWriter();
       if (parameterTypeList.size() > 0) {
         String requestJSONData = ServletRequestExtractTool.getRequestJSONData(request);
@@ -125,9 +139,19 @@ public class DispatcherServlet extends FrameworkServlet {
         writer.write(GsonSerializableTool.objectToJSON(errorResponse));
       }
       e.printStackTrace();
+    } catch (SQLException e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
     } finally {
       if (writer != null) {
         writer.close();
+      }
+      // 回收连接
+      System.out.println("release the connection: " + connection);
+      try {
+        ThreadLocalDataSource.close();
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
     }
   }

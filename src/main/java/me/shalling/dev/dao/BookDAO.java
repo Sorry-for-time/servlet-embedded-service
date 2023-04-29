@@ -123,7 +123,6 @@ public class BookDAO {
         preparedStatement.addBatch();
       }
       int[] ints = preparedStatement.executeBatch();
-      connection.commit();
       return Arrays.stream(ints).reduce(0, Integer::sum);
     } catch (Exception e) {
       if (connection != null) {

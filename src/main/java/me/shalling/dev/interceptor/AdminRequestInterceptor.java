@@ -1,6 +1,5 @@
 package me.shalling.dev.interceptor;
 
-import me.shalling.dev.container.config.base.TokenStorage;
 import framework.util.GsonSerializableTool;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.annotation.WebFilter;
@@ -9,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.shalling.dev.config.GlobalSymbol;
 import me.shalling.dev.constant.StatusCode;
+import me.shalling.dev.container.config.base.TokenStorage;
 import me.shalling.dev.interceptor.meta.TokenMeta;
-import me.shalling.dev.util.source.ThreadLocalDataSource;
 import me.shalling.dev.vo.Result;
 
 import java.io.PrintWriter;
@@ -70,16 +69,12 @@ public class AdminRequestInterceptor extends HttpFilter {
     try {
       // 如果 token 有效, 放行, 并为当前处理线程分配数据库连接资源
       if (requestAccessible) {
+
         try {
-          // 为当前线程分配连接
-          ThreadLocalDataSource.getConnection();
           chain.doFilter(request, response);
         } catch (Exception e) {
           // 假设实际上没问题...
           e.printStackTrace();
-        } finally {
-          // 回收连接
-          ThreadLocalDataSource.close();
         }
       }
       // 如果不存在 token 或者已经过期, 提示客户端被禁止原因(粗暴处理, 不做更多信息设置)

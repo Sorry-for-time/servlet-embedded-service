@@ -1,5 +1,6 @@
 package me.shalling.dev.container;
 
+import me.shalling.dev.Application;
 import me.shalling.dev.container.config.ApplicationConfig;
 import me.shalling.dev.container.config.base.Server;
 import me.shalling.dev.container.egg.BannerOutput;
@@ -39,7 +40,8 @@ public final class ApplicationLeftEnterPoint implements Serializable {
   /**
    * 启动 tomcat 容器服务
    */
-  public static void start(String... args) {
+  public static void start(Class<Application> applicationClass, String... args) {
+
     System.out.println("initial params: " + Arrays.toString(args));
     ApplicationConfig configurationSingleton = ConfigProvider.getConfiguration();
     Server serverConfigDetail = configurationSingleton.getServer();
