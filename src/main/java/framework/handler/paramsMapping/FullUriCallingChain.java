@@ -17,6 +17,11 @@ public class FullUriCallingChain {
 
   public final Map<String, InvokerDetail> uriInvokerDetailMap;
 
+  public FullUriCallingChain() {
+    this.instanceMap = new ConcurrentHashMap<>();
+    this.uriInvokerDetailMap = new ConcurrentHashMap<>();
+  }
+
   public static class InvokerDetail {
     public final List<Class<?>> parameterTypeList;
     public final Class<?> itSelfInvokerClass;
@@ -27,10 +32,5 @@ public class FullUriCallingChain {
       this.itSelfInvokerClass = itSelfInvokerClass;
       this.methodReturnType = methodReturnType;
     }
-  }
-
-  public FullUriCallingChain() {
-    this.instanceMap = new ConcurrentHashMap<>();
-    this.uriInvokerDetailMap = new ConcurrentHashMap<>();
   }
 }

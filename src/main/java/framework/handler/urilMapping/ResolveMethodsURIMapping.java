@@ -9,8 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import static framework.handler.urilMapping.RouteURIMapping.resolveAllChildRoutes;
-
 /**
  * 匹配被 RestControllerLeft 标注的 Controller 下所有被 GET 和 POST 请求注解标记的方法
  *
@@ -25,7 +23,7 @@ public class ResolveMethodsURIMapping {
    * @return 所有 post, get 方法的处理视图, 以及方法所包含的元信息
    */
   public static Map<String, RouteMethodRecord> resolveAllControllerURIAnnotatedMapping(Map<String, Class<?>> allRestControllerTaggedClass) {
-    return resolveAllChildRoutes(
+    return RouteURIMapping.resolveAllChildRoutes(
       allRestControllerTaggedClass,
       (rootPath, controllerMethod, methodRecordMap) -> {
         // 获取方法上所有的注解

@@ -12,19 +12,14 @@ import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 
 /**
- * global request/response character encoding process
+ * 全局 `请求/响应` 编解码设置
  *
  * @author Shalling
  * @version v0.01
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
  * @since 2023/4/8 21:41
  */
-@WebFilter(
-  urlPatterns = {"/*"},
-  asyncSupported = true,
-  description = "global request/response character encoding process",
-  filterName = "GLOBAL_CHARSET_ENCODING_FILTER"
-)
+@WebFilter(urlPatterns = {"/*"}, asyncSupported = true)
 public class GlobalEncodingInterceptor extends HttpFilter {
   @Serial
   private static final long serialVersionUID = -7034346804707528498L;

@@ -3,7 +3,7 @@ package framework.stereotype;
 import java.lang.annotation.*;
 
 /**
- * 被此注解标记的类会被当成一个入口启动类
+ * 被此注解标记的类会被当成一个入口启动类, but 实际的功能还没去做...
  *
  * @author Shalling
  * @version v0.01

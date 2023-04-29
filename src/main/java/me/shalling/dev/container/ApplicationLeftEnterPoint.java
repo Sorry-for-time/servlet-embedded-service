@@ -1,0 +1,163 @@
+package me.shalling.dev.container;
+
+import me.shalling.dev.Application;
+import me.shalling.dev.container.config.ApplicationConfig;
+import me.shalling.dev.container.config.base.Server;
+import me.shalling.dev.container.egg.BannerOutput;
+import me.shalling.dev.container.egg.ConsoleColors;
+import framework.view.viewAdapter.DispatcherServlet;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.EmptyResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
+
+import java.io.File;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Arrays;
+
+/**
+ * @author Shalling
+ * @version v0.01
+ * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
+ * @since 2023/4/8 21:08
+ */
+@Slf4j
+public final class ApplicationLeftEnterPoint implements Serializable {
+  public static final String WORK_HOME = System.getProperty("user.dir");
+  public static final int DEFAULT_PORT = 8080;
+  public static final String DEFAULT_HOSTNAME = "localhost";
+  public static final String STORE_DIR = System.getProperty("user.dir") + "/target";
+  public static final String WEBAPP_PATHNAME = "./";
+  public static final String CONTEXT_PATH = "";
+  @Serial
+  private static final long serialVersionUID = -6432398288697156075L;
+  public static final String TOMCAT_THREADS = "-tomcat-threads=";
+
+  /**
+   * 启动 tomcat 容器服务
+   */
+  public static void start(Class<Application> applicationClass, String... args) {
+
+    System.out.println("initial params: " + Arrays.toString(args));
+    ApplicationConfig configurationSingleton = ConfigProvider.getConfiguration();
+    Server serverConfigDetail = configurationSingleton.getServer();
+    BannerOutput.displayBanner(configurationSingleton);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_YELLOW + configurationSingleton + ConsoleColors.TEXT_RESET);
+
+    Tomcat tomcat = new Tomcat();
+    tomcat.setBaseDir(STORE_DIR);
+    tomcat.setAddDefaultWebXmlToWebapp(false);
+
+    // 从命令行获取参数
+    for (String arg : args) {
+      if (arg != null) {
+        if (arg.startsWith(TOMCAT_THREADS)) {
+          int threadCount = Integer.parseInt(arg.substring(TOMCAT_THREADS.length()));
+          tomcat.getServer().setUtilityThreads(threadCount);
+          System.out.println(ConsoleColors.TEXT_GREEN + "tomcat server set setUtilityThreads: " + threadCount + ConsoleColors.TEXT_RESET);
+          break;
+        }
+      }
+    }
+
+    if (serverConfigDetail != null) {
+      if (serverConfigDetail.getPort() != null) {
+        tomcat.setPort(serverConfigDetail.getPort());
+      } else {
+        tomcat.setPort(DEFAULT_PORT);
+      }
+      if (serverConfigDetail.getHostName() != null) {
+        tomcat.setHostname(serverConfigDetail.getHostName());
+      } else {
+        tomcat.setHostname(DEFAULT_HOSTNAME);
+      }
+    } else {
+      tomcat.setPort(DEFAULT_PORT);
+      tomcat.setHostname(DEFAULT_HOSTNAME);
+    }
+
+    StandardContext context = (StandardContext) tomcat
+      .addWebapp(
+        CONTEXT_PATH,
+        new File(WEBAPP_PATHNAME).getAbsolutePath()
+      );
+
+    context.setSessionCookiePathUsesTrailingSlash(true);
+    context.setSessionCookieName("JSESSIONID");
+    context.setUseHttpOnly(true);
+    context.setCookies(true);
+    setupResource(context);
+
+    // 添加全局视图处理
+    DispatcherServlet dispatcherServlet = new DispatcherServlet("GET", "POST");
+    tomcat.addServlet(CONTEXT_PATH, "DispatcherServlet", dispatcherServlet);
+    context.addServletMappingDecoded("/*", "DispatcherServlet");
+
+    Connector connector = tomcat.getConnector();
+    connector.setAllowTrace(true);
+    showConnectorBasicInfo(connector);
+
+    try {
+      tomcat.start();
+      org.apache.catalina.Server server = tomcat.getServer();
+      server.await();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * 对上下文对象进行初始化配置
+   *
+   * @param context 上限=下文对象配置
+   */
+  private static void setupResource(StandardContext context) {
+    System.out.println(ConsoleColors.TEXT_BRIGHT_PURPLE + "WORK_HOME: " + WORK_HOME + ConsoleColors.TEXT_RESET);
+    File classedDir = new File(WORK_HOME, "target/classes");
+    File jarDir = new File(WORK_HOME, "");
+    var resourceRoot = new StandardRoot(context);
+    if (classedDir.exists()) {
+      resourceRoot
+        .addPreResources(
+          new DirResourceSet(
+            resourceRoot,
+            "/WEB-INF/classes",
+            classedDir.getAbsolutePath(),
+            "/"
+          )
+        );
+      log.info("Resources added: [classes]");
+    } else if (jarDir.exists()) {
+      resourceRoot
+        .addJarResources(
+          new DirResourceSet(
+            resourceRoot,
+            "/WEB-INF/lib",
+            classedDir.getAbsolutePath(),
+            "/"
+          )
+        );
+      log.info("Resources added: [jars]");
+    } else {
+      resourceRoot
+        .addJarResources(
+          new EmptyResourceSet(resourceRoot)
+        );
+      log.info("Resources added: [empty]");
+    }
+    context.setResources(resourceRoot);
+  }
+
+  private static void showConnectorBasicInfo(Connector connector) {
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server bind port: " + connector.getPort() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server scheme: " + connector.getScheme() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server objectName: " + connector.getObjectName() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server executorName: " + connector.getExecutorName() + ConsoleColors.TEXT_RESET);
+    System.out.println(ConsoleColors.TEXT_BRIGHT_CYAN + "server protocol: " + connector.getProtocol() + ConsoleColors.TEXT_RESET);
+  }
+}

@@ -1,5 +1,6 @@
 package framework.handler.controllerMapping;
 
+import framework.handler.util.ClassAnnotationResolveHandler;
 import framework.scanner.PackageClassScanner;
 import framework.stereotype.RestControllerLeft;
 
@@ -8,8 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-
-import static framework.handler.util.ClassAnnotationResolveHandler.getAllTagMatchedClassMap;
 
 /**
  * RestControllerLeft 注解处理器
@@ -28,7 +27,7 @@ public final class ResolveControllerAnnotation {
    */
   public static Map<String, Class<?>> collectAllRestControllerTaggedClass(String packageName) {
     List<String> classFullNameList = PackageClassScanner.getClassFullNameList(packageName);
-    return getAllTagMatchedClassMap(
+    return ClassAnnotationResolveHandler.getAllTagMatchedClassMap(
       classFullNameList,
       (aClass, annotations, classAndPathMap) -> {
         for (Annotation annotation : annotations) {

@@ -1,1 +1,1 @@
-framework.serverContainer.init.WebApplicationServletContainerInitializer
+me.shalling.dev.container.WebApplicationServletContainerInitializer

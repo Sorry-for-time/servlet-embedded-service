@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 这个注解会将被标记的 controller 内部返回的所有方法均返回 json 处理视图数据
- * json 序列化依赖于 jackson 解析
+ * json 序列化依赖于特定的解析库实现
  *
  * @author Shalling
  * @version v0.01
