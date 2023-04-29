@@ -9,7 +9,8 @@ dataSource:
   url: jdbc:mysql://192.168.220.140:33060/tb_library
   user: root
   password: 1234
-  max: 12
+  # 参考公式, maxConnections = ((core_count * 2) + effective_spindle_count)
+  max: 6
 # token 设置(单位: ms)
 tokenConfig:
   expire: 86400000
