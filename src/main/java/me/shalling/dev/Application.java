@@ -1,7 +1,7 @@
 package me.shalling.dev;
 
-import me.shalling.dev.container.ApplicationLeftEnterPoint;
 import framework.stereotype.ApplicationLeft;
+import me.shalling.dev.container.ApplicationLeftEnterPoint;
 
 /**
  * a simple tomcat embedded service entry
@@ -14,6 +14,6 @@ import framework.stereotype.ApplicationLeft;
 @ApplicationLeft
 public class Application {
   public static void main(String[] args) {
-    ApplicationLeftEnterPoint.start(args);
+    ApplicationLeftEnterPoint.start(Application.class, args);
   }
 }
