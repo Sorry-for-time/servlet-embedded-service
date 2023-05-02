@@ -1,6 +1,5 @@
 package me.shalling.dev.controller;
 
-import me.shalling.dev.container.config.base.TokenStorage;
 import framework.stereotype.RestControllerLeft;
 import framework.stereotype.method.PostMappingLeft;
 import framework.stereotype.params.HeaderDetail;
@@ -8,6 +7,7 @@ import framework.stereotype.params.PostBody;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import me.shalling.dev.constant.StatusCode;
+import me.shalling.dev.container.config.base.TokenStorage;
 import me.shalling.dev.interceptor.meta.TokenMeta;
 import me.shalling.dev.vo.Result;
 
