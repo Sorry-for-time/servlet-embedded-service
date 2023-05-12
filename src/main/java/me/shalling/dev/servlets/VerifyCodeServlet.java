@@ -20,7 +20,7 @@ import java.io.Serial;
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
  * @since 2023/4/22 15:00
  */
-@WebServlet(urlPatterns = {"/verify-code"}, loadOnStartup = 0)
+@WebServlet(urlPatterns = {"/verify-code"}, loadOnStartup = 1, asyncSupported = true)
 public class VerifyCodeServlet extends HttpServlet {
   @Serial
   private static final long serialVersionUID = -6197588984346637907L;

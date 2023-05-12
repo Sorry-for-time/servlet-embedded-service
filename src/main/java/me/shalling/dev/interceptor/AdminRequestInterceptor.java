@@ -26,7 +26,7 @@ import java.util.Map;
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
  * @since 2023/4/22 16:04
  */
-@WebFilter(urlPatterns = {"/admin/*"})
+@WebFilter(urlPatterns = {"/admin/*"}, asyncSupported = true)
 public class AdminRequestInterceptor extends HttpFilter {
   @Serial
   private static final long serialVersionUID = -2133082575529882131L;

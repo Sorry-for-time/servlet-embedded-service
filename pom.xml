@@ -144,7 +144,7 @@
           </descriptorRefs>
 
           <archive>
-            <manifest>s
+            <manifest>
               <mainClass>me.shalling.dev.Application</mainClass>
             </manifest>
           </archive>

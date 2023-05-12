@@ -1,12 +1,13 @@
 package me.shalling.dev.container;
 
+import framework.view.viewAdapter.DispatcherServlet;
+import lombok.extern.slf4j.Slf4j;
 import me.shalling.dev.Application;
 import me.shalling.dev.container.config.ApplicationConfig;
 import me.shalling.dev.container.config.base.Server;
 import me.shalling.dev.container.egg.BannerOutput;
 import me.shalling.dev.container.egg.ConsoleColors;
-import framework.view.viewAdapter.DispatcherServlet;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
@@ -35,7 +36,7 @@ public final class ApplicationLeftEnterPoint implements Serializable {
   public static final String CONTEXT_PATH = "";
   @Serial
   private static final long serialVersionUID = -6432398288697156075L;
-  public static final String TOMCAT_THREADS = "-tomcat-threads=";
+  public static final String UTILITY_THREAD = "-catalina-utility-thread=";
 
   /**
    * 启动 tomcat 容器服务
@@ -55,10 +56,10 @@ public final class ApplicationLeftEnterPoint implements Serializable {
     // 从命令行获取参数
     for (String arg : args) {
       if (arg != null) {
-        if (arg.startsWith(TOMCAT_THREADS)) {
-          int threadCount = Integer.parseInt(arg.substring(TOMCAT_THREADS.length()));
+        if (arg.startsWith(UTILITY_THREAD)) {
+          int threadCount = Integer.parseInt(arg.substring(UTILITY_THREAD.length()));
           tomcat.getServer().setUtilityThreads(threadCount);
-          System.out.println(ConsoleColors.TEXT_GREEN + "tomcat server set setUtilityThreads: " + threadCount + ConsoleColors.TEXT_RESET);
+          System.out.println(ConsoleColors.TEXT_GREEN + "tomcat server set utility threads: " + threadCount + ConsoleColors.TEXT_RESET);
           break;
         }
       }
@@ -94,7 +95,10 @@ public final class ApplicationLeftEnterPoint implements Serializable {
 
     // 添加全局视图处理
     DispatcherServlet dispatcherServlet = new DispatcherServlet("GET", "POST");
-    tomcat.addServlet(CONTEXT_PATH, "DispatcherServlet", dispatcherServlet);
+    Wrapper wrapper = tomcat.addServlet(CONTEXT_PATH, "DispatcherServlet", dispatcherServlet);
+    // 启用异步支持和预热
+    wrapper.setAsyncSupported(true);
+    wrapper.setLoadOnStartup(1);
     context.addServletMappingDecoded("/*", "DispatcherServlet");
 
     Connector connector = tomcat.getConnector();
