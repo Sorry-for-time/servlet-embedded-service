@@ -1,8 +1,5 @@
 package me.shalling.dev.servlets;
 
-import me.shalling.dev.container.ConfigProvider;
-import me.shalling.dev.container.config.base.TokenConfig;
-import me.shalling.dev.container.config.base.TokenStorage;
 import framework.util.GsonSerializableTool;
 import framework.view.util.ServletRequestExtractTool;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import me.shalling.dev.constant.StatusCode;
+import me.shalling.dev.container.ConfigProvider;
+import me.shalling.dev.container.config.base.TokenConfig;
+import me.shalling.dev.container.config.base.TokenStorage;
 import me.shalling.dev.entity.User;
 import me.shalling.dev.interceptor.meta.TokenMeta;
 import me.shalling.dev.service.UserService;
@@ -31,7 +31,7 @@ import java.util.UUID;
  * @see <a href="https://github.com/Sorry-for-time">follow me on github</a>
  * @since 2023/4/22 15:39
  */
-@WebServlet(urlPatterns = {"/login"}, loadOnStartup = 0)
+@WebServlet(urlPatterns = {"/login"}, loadOnStartup = 1, asyncSupported = true)
 public class LoginServlet extends HttpServlet {
   private final static UserService userService = new UserServiceImpl();
 
